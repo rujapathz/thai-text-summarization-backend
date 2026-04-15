@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
 import { SummerizeService } from './summarize.service';
-import { TextSummarizeDto } from './dto/summarize.dto';
+import { TextSummarizeDto, UrlSummarizeDto } from './dto/summarize.dto';
 
 @Controller('summarize')
 export class SummerizeController {
@@ -9,5 +9,10 @@ export class SummerizeController {
   @Post('text')
   summarizeText(@Body() dto: TextSummarizeDto) {
     return this.summerizeService.summarizeText(dto);
+  }
+
+  @Post('url')
+  summarizeUrl(@Body() dto: UrlSummarizeDto) {
+    return this.summerizeService.summarizeUrl(dto);
   }
 }

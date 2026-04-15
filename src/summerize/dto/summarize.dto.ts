@@ -5,6 +5,19 @@ export class TextSummarizeDto {
   @IsString()
   text: string;
 
+  @IsString()
+  @IsIn(['teaser', 'short', 'normal'])
+  mode: 'teaser' | 'short' | 'normal';
+}
+
+export class UrlSummarizeDto {
+  @IsString()
+  url: string;
+
+  @IsString()
+  @IsIn(['teaser', 'short', 'normal'])
+  mode: 'teaser' | 'short' | 'normal';
+}
 //   @IsNumber()
 //   @IsOptional()
 //   ratio?: number = 0.3;
@@ -16,8 +29,3 @@ export class TextSummarizeDto {
 //   @IsNumber()
 //   @IsOptional()
 //   max_length?: number = 300;
-
-  @IsString()
-  @IsIn(['teaser', 'short', 'normal'])
-  mode: 'teaser' | 'short' | 'normal';
-}
