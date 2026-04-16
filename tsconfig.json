@@ -13,6 +13,7 @@
     "rootDir": "./src",
     "baseUrl": ".",
     "incremental": true,
+    "esModuleInterop": true,
     // "tsBuildInfoFile": "./.tsbuildinfo",
     "skipLibCheck": true,
     // "isolatedModules": true,

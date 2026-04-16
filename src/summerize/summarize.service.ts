@@ -107,4 +107,39 @@ export class SummerizeService {
     };
   }
 }
+  async summarizePdf(file: any, mode: string) {
+    try {
+      const pdfParse = require('pdf-parse');
+      
+      const data = await pdfParse(file.buffer);
+      
+      let text = data.text;
+      console.log('PDF TEXT:', text);
+      const cleanText = text
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 2000);
+
+      const finalMode = mode || 'normal';
+
+      const response = await firstValueFrom(
+        this.httpService.post('http://host.docker.internal:8000/summarize', {
+          text: cleanText,
+          mode: finalMode,
+        }),
+      );
+
+      return {
+        summary: response.data.summary,
+        original_text: cleanText,
+      };
+
+    } catch (error) {
+      console.error(error);
+      return {
+        summary: 'ERROR: cannot parse or summarize PDF',
+        original_text: '',
+      };
+    }
+  }
 }

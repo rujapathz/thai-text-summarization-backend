@@ -1,6 +1,8 @@
-import { Controller, Post, Body, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Post, Body, HttpCode, HttpStatus, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { Express } from 'express';
 import { SummerizeService } from './summarize.service';
-import { TextSummarizeDto, UrlSummarizeDto } from './dto/summarize.dto';
+import { PdfSummarizeDto, TextSummarizeDto, UrlSummarizeDto } from './dto/summarize.dto';
 
 @Controller('summarize')
 export class SummerizeController {
@@ -19,5 +21,14 @@ export class SummerizeController {
   @Post('evaluate')
   summarizeWithBert(@Body() dto: TextSummarizeDto) {
     return this.summerizeService.summarizeWithBertScore(dto);
+  }
+
+  @Post('pdf')
+  @UseInterceptors(FileInterceptor('file'))
+  async summarizePdf(
+    @UploadedFile() file: Express.Multer.File,
+    @Body() dto: PdfSummarizeDto,
+  ) {
+    return this.summerizeService.summarizePdf(file, dto.mode);
   }
 }

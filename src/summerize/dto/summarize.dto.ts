@@ -22,6 +22,12 @@ export class UrlSummarizeDto {
   @IsIn(['teaser', 'short', 'normal'])
   mode: 'teaser' | 'short' | 'normal';
 }
+
+export class PdfSummarizeDto {
+  @IsString()
+  @IsIn(['teaser', 'short', 'normal'])
+  mode: 'teaser' | 'short' | 'normal';
+}
 //   @IsNumber()
 //   @IsOptional()
 //   ratio?: number = 0.3;
