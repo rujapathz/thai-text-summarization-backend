@@ -71,4 +71,40 @@ export class SummerizeService {
       };
     }
   }
+
+  async summarizeWithBertScore(dto: TextSummarizeDto) {
+  const { text, mode, reference } = dto;
+
+  try {
+    const response = await firstValueFrom(
+      this.httpService.post(
+        'http://127.0.0.1:8000/evaluate',
+        {
+          text,
+          mode,
+          reference,
+        },
+        { timeout: 300000 }
+      )
+    );
+
+    return {
+      summary: response.data.summary,
+      bertscore: response.data.bertscore,
+      original_text: text,
+    };
+
+  } catch (error) {
+    console.error(
+  '🔥 ERROR:',
+  (error as any)?.response?.data || (error as any)?.message
+);
+
+    return {
+      summary: 'ERROR',
+      bertscore: null,
+      original_text: text,
+    };
+  }
+}
 }

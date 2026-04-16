@@ -8,6 +8,10 @@ export class TextSummarizeDto {
   @IsString()
   @IsIn(['teaser', 'short', 'normal'])
   mode: 'teaser' | 'short' | 'normal';
+
+  @IsOptional()         
+  @IsString()
+  reference?: string; 
 }
 
 export class UrlSummarizeDto {

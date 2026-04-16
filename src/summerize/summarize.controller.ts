@@ -15,4 +15,9 @@ export class SummerizeController {
   summarizeUrl(@Body() dto: UrlSummarizeDto) {
     return this.summerizeService.summarizeUrl(dto);
   }
+
+  @Post('evaluate')
+  summarizeWithBert(@Body() dto: TextSummarizeDto) {
+    return this.summerizeService.summarizeWithBertScore(dto);
+  }
 }
