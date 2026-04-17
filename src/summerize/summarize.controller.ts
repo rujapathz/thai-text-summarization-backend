@@ -18,11 +18,6 @@ export class SummerizeController {
     return this.summerizeService.summarizeUrl(dto);
   }
 
-  @Post('evaluate')
-  summarizeWithBert(@Body() dto: TextSummarizeDto) {
-    return this.summerizeService.summarizeWithBertScore(dto);
-  }
-
   @Post('pdf')
   @UseInterceptors(FileInterceptor('file'))
   async summarizePdf(
@@ -30,5 +25,10 @@ export class SummerizeController {
     @Body() dto: PdfSummarizeDto,
   ) {
     return this.summerizeService.summarizePdf(file, dto.mode);
+  }
+
+  @Post('evaluate')
+  summarizeWithBert(@Body() dto: TextSummarizeDto) {
+    return this.summerizeService.summarizeWithBertScore(dto);
   }
 }
