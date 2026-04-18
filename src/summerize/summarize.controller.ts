@@ -18,11 +18,6 @@ export class SummerizeController {
     return this.summerizeService.summarizeUrl(dto);
   }
 
-  @Post('evaluate')
-  summarizeWithBert(@Body() dto: TextSummarizeDto) {
-    return this.summerizeService.summarizeWithBertScore(dto);
-  }
-
   @Post('pdf')
   @UseInterceptors(FileInterceptor('file'))
   async summarizePdf(
@@ -30,5 +25,25 @@ export class SummerizeController {
     @Body() dto: PdfSummarizeDto,
   ) {
     return this.summerizeService.summarizePdf(file, dto.mode);
+  }
+
+  @Post('evaluate')
+  summarizeWithBert(@Body() dto: TextSummarizeDto) {
+    return this.summerizeService.summarizeWithBertScore(dto);
+  }
+
+  @Post('evaluate-url')
+  evaluateUrl(@Body() dto: any) {
+    return this.summerizeService.evaluateUrl(dto);
+  }
+
+  @Post('evaluate-pdf')
+  @UseInterceptors(FileInterceptor('file'))
+  async evaluatePdf(
+    @UploadedFile() file: Express.Multer.File,
+    @Body('mode') mode: string,
+    @Body('reference') reference: string,
+  ) {
+    return this.summerizeService.evaluatePdf(file, mode, reference);
   }
 }
