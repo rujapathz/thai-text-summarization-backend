@@ -139,7 +139,10 @@ export class SummerizeService {
     }
   }
 
+<<<<<<< HEAD
     // 🔹 PDF
+=======
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
   async summarizePdf(file: any, mode: string) {
     try {
       const pdfParse = require('pdf-parse');
@@ -180,16 +183,29 @@ export class SummerizeService {
     }
   }
 
+<<<<<<< HEAD
   // 🔹 BERTScore 
+=======
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
   async summarizeWithBertScore(dto: TextSummarizeDto) {
     const { text, mode, reference } = dto;
 
     try {
       const response = await firstValueFrom(
         this.httpService.post(
+<<<<<<< HEAD
           'http://host.docker.internal:8000/evaluate',
           { text, mode, reference },
           { timeout: 60000 }
+=======
+          'http://127.0.0.1:8000/evaluate',
+          {
+            text,
+            mode,
+            reference,
+          },
+          { timeout: 300000 }
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
         )
       );
 
@@ -201,9 +217,15 @@ export class SummerizeService {
 
     } catch (error) {
       console.error(
+<<<<<<< HEAD
         '🔥 ERROR:',
         (error as any)?.response?.data || (error as any)?.message
       );
+=======
+    '🔥 ERROR:',
+    (error as any)?.response?.data || (error as any)?.message
+  );
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
 
       return {
         summary: 'ERROR',
@@ -212,6 +234,7 @@ export class SummerizeService {
       };
     }
   }
+<<<<<<< HEAD
 
 async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
   const { url, mode, reference } = dto;
@@ -318,4 +341,6 @@ async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
     };
   }
 }
+=======
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
 }

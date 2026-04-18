@@ -31,6 +31,7 @@ export class SummerizeController {
   summarizeWithBert(@Body() dto: TextSummarizeDto) {
     return this.summerizeService.summarizeWithBertScore(dto);
   }
+<<<<<<< HEAD
 
   @Post('evaluate-url')
   evaluateUrl(@Body() dto: any) {
@@ -46,4 +47,6 @@ export class SummerizeController {
   ) {
     return this.summerizeService.evaluatePdf(file, mode, reference);
   }
+=======
+>>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
 }
