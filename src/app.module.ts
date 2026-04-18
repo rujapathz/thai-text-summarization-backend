@@ -1,6 +1,6 @@
 // src/app.module.ts
 import { Module } from '@nestjs/common';
-import { SummerizeModule } from '@summerize/summerize.module';
+import { SummerizeModule } from '@summerize/summarize.module';
 
 
 @Module({
