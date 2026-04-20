@@ -10,60 +10,70 @@ export class SummerizeService {
   constructor(private readonly httpService: HttpService) {}
 
   
-  calculateFrontendScore(original: string, summary: string) {
-    const originalWords = original.split(' ');
-    const summaryWords = summary.split(' ');
+  calculateFrontendScore(
+  original: string,
+  summary: string,
+  mode: 'teaser' | 'short' | 'normal'
+) {
+  const originalWords = original.split(' ').filter(w => w.length > 0);
+  const summaryWords = summary.split(' ').filter(w => w.length > 0);
 
-    // 🔹 Compression
-    const compression = summaryWords.length / originalWords.length;
+  const wordCount = summaryWords.length;
 
-    let compressionScore = 0;
-    if (compression < 0.2) compressionScore = 60;
-    else if (compression <= 0.5) compressionScore = 100;
-    else compressionScore = 70;
+  // 🔹 กำหนดช่วงคำตาม mode (อิง model)
+  let min = 50, max = 120;
 
-    // 🔹 Keyword overlap
-    const originalSet = new Set(originalWords);
-    let overlap = 0;
-
-    summaryWords.forEach(word => {
-      if (originalSet.has(word)) overlap++;
-    });
-
-    const overlapScore = (overlap / summaryWords.length) * 100;
-
-    // 🔹 Readability
-    const avgWordLength =
-      summaryWords.reduce((sum, w) => sum + w.length, 0) /
-      summaryWords.length;
-
-    let readabilityScore = avgWordLength < 30 ? 100 : 70;
-
-    // Final score
-    const finalScore = Math.round(
-      compressionScore * 0.3 +
-      overlapScore * 0.5 +
-      readabilityScore * 0.2
-    );
-
-    let grade = 'C';
-    let color = 'red';
-
-    if (finalScore >= 85) {
-      grade = 'A';
-      color = 'green';
-    } else if (finalScore >= 70) {
-      grade = 'B';
-      color = 'yellow';
-    }
-
-    return {
-      score: finalScore,
-      grade,
-      color,
-    };
+  if (mode === 'teaser') {
+    min = 10; max = 30;
+  } else if (mode === 'short') {
+    min = 20; max = 60;
   }
 
+  // 🔹 Length score (สำคัญสุด)
+  let lengthScore = 0;
+
+  if (wordCount >= min && wordCount <= max) {
+    lengthScore = 100;
+  } else if (wordCount < min) {
+    lengthScore = 60;
+  } else if (wordCount > max && wordCount <= max * 1.5) {
+    lengthScore = 70;
+  } else {
+    lengthScore = 50;
+  }
+
+  // 🔹 Keyword overlap
+  const originalSet = new Set(originalWords);
+  let overlap = 0;
+
+  summaryWords.forEach(word => {
+    if (originalSet.has(word)) overlap++;
+  });
+
+  const overlapScore =
+    summaryWords.length > 0
+      ? (overlap / summaryWords.length) * 100
+      : 0;
+
+  // 🔹 Readability
+  const avgWordLength =
+    summaryWords.length > 0
+      ? summaryWords.reduce((sum, w) => sum + w.length, 0) / summaryWords.length
+      : 0;
+
+  const readabilityScore = avgWordLength < 30 ? 100 : 70;
+
+  
+  const finalScore = Math.round(
+    lengthScore * 0.4 +      
+    overlapScore * 0.4 +
+    readabilityScore * 0.2
+  );
+
+  return {
+    score: finalScore
+  };
+}
   // 🔹 TEXT
   async summarizeText(dto: TextSummarizeDto) {
     const { text, mode } = dto;
@@ -78,12 +88,12 @@ export class SummerizeService {
 
       const summary = response.data.summary;
 
-      const metric = this.calculateFrontendScore(text, summary);
+      const metric = this.calculateFrontendScore(text, summary, mode);
 
       return {
         summary,
         original_text: text,
-        frontend_metric: metric, // 👈 เพิ่มตรงนี้
+        frontend_metric: metric, 
       };
 
     } catch (error) {
@@ -122,12 +132,12 @@ export class SummerizeService {
       );
 
       const summary = response.data.summary;
-      const metric = this.calculateFrontendScore(cleanText, summary);
+      const metric = this.calculateFrontendScore(cleanText, summary, mode);
 
       return {
         summary,
         original_text: cleanText,
-        frontend_metric: metric, // 👈 เพิ่ม
+        frontend_metric: metric, 
       };
 
     } catch (error) {
@@ -139,10 +149,7 @@ export class SummerizeService {
     }
   }
 
-<<<<<<< HEAD
     // 🔹 PDF
-=======
->>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
   async summarizePdf(file: any, mode: string) {
     try {
       const pdfParse = require('pdf-parse');
@@ -155,17 +162,17 @@ export class SummerizeService {
         .trim()
         .slice(0, 2000);
 
-      const finalMode = mode || 'normal';
+      const finalMode = (mode || 'normal') as 'normal' | 'teaser' | 'short';
 
       const response = await firstValueFrom(
         this.httpService.post('http://host.docker.internal:8000/summarize', {
           text: cleanText,
-          mode: finalMode,
+          mode : finalMode,
         }),
       );
 
       const summary = response.data.summary;
-      const metric = this.calculateFrontendScore(cleanText, summary);
+      const metric = this.calculateFrontendScore(cleanText, summary, finalMode);
 
       return {
         summary,
@@ -183,29 +190,16 @@ export class SummerizeService {
     }
   }
 
-<<<<<<< HEAD
   // 🔹 BERTScore 
-=======
->>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
   async summarizeWithBertScore(dto: TextSummarizeDto) {
     const { text, mode, reference } = dto;
 
     try {
       const response = await firstValueFrom(
         this.httpService.post(
-<<<<<<< HEAD
           'http://host.docker.internal:8000/evaluate',
           { text, mode, reference },
           { timeout: 60000 }
-=======
-          'http://127.0.0.1:8000/evaluate',
-          {
-            text,
-            mode,
-            reference,
-          },
-          { timeout: 300000 }
->>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
         )
       );
 
@@ -217,15 +211,9 @@ export class SummerizeService {
 
     } catch (error) {
       console.error(
-<<<<<<< HEAD
         '🔥 ERROR:',
         (error as any)?.response?.data || (error as any)?.message
       );
-=======
-    '🔥 ERROR:',
-    (error as any)?.response?.data || (error as any)?.message
-  );
->>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
 
       return {
         summary: 'ERROR',
@@ -234,7 +222,6 @@ export class SummerizeService {
       };
     }
   }
-<<<<<<< HEAD
 
 async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
   const { url, mode, reference } = dto;
@@ -341,6 +328,4 @@ async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
     };
   }
 }
-=======
->>>>>>> 54b967da7be5392c51e47814f1808fd27f3beaf2
 }
