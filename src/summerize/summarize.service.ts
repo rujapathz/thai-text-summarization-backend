@@ -122,7 +122,7 @@ export class SummerizeService {
       const cleanText = content
         .replace(/\s+/g, ' ')
         .trim()
-        .slice(0, 2000);
+        .slice(0, 1000);
 
       const response = await firstValueFrom(
         this.httpService.post('http://host.docker.internal:8000/summarize', {
@@ -160,7 +160,7 @@ export class SummerizeService {
       const cleanText = text
         .replace(/\s+/g, ' ')
         .trim()
-        .slice(0, 2000);
+        .slice(0, 1000);
 
       const finalMode = (mode || 'normal') as 'normal' | 'teaser' | 'short';
 
@@ -246,7 +246,7 @@ async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
     const cleanText = content
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 2000);
+      .slice(0, 1000);
 
     
     if (!cleanText || cleanText.length < 50) {
@@ -299,7 +299,7 @@ async evaluateUrl(dto: UrlSummarizeDto & { reference?: string }) {
     const cleanText = text
       .replace(/\s+/g, ' ')
       .trim()
-      .slice(0, 2000);
+      .slice(0, 1000);
 
     const response = await firstValueFrom(
       this.httpService.post(
