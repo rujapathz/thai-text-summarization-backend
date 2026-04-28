@@ -9,65 +9,70 @@ import { TextSummarizeDto, UrlSummarizeDto } from './dto/summarize.dto';
 export class SummerizeService {
   constructor(private readonly httpService: HttpService) {}
 
-  
-  calculateFrontendScore(
+calculateFrontendScore(
   original: string,
   summary: string,
   mode: 'teaser' | 'short' | 'normal'
 ) {
-  const originalWords = original.split(' ').filter(w => w.length > 0);
-  const summaryWords = summary.split(' ').filter(w => w.length > 0);
+  
+  const originalLength = original.length || 1;
+  const summaryLength = summary.length || 0;
 
-  const wordCount = summaryWords.length;
+  const ratio = summaryLength / originalLength;
 
-  // 🔹 กำหนดช่วงคำตาม mode (อิง model)
-  let min = 50, max = 120;
+  
+  let min = 0.2, max = 0.5;
 
   if (mode === 'teaser') {
-    min = 10; max = 30;
+    min = 0.1; max = 0.25;
   } else if (mode === 'short') {
-    min = 20; max = 60;
+    min = 0.15; max = 0.4;
+  } else if (mode === 'normal') {
+    min = 0.3; max = 0.7;
   }
 
-  // 🔹 Length score (สำคัญสุด)
+  // 🔹 Length Score 
   let lengthScore = 0;
-
-  if (wordCount >= min && wordCount <= max) {
+  if (ratio >= min && ratio <= max) {
     lengthScore = 100;
-  } else if (wordCount < min) {
-    lengthScore = 60;
-  } else if (wordCount > max && wordCount <= max * 1.5) {
-    lengthScore = 70;
+  } else if (ratio < min) {
+    lengthScore = 65;
+  } else if (ratio <= max * 1.3) {
+    lengthScore = 75;
   } else {
     lengthScore = 50;
   }
 
-  // 🔹 Keyword overlap
-  const originalSet = new Set(originalWords);
-  let overlap = 0;
+  
+  let matchCount = 0;
+  for (let i = 0; i < summary.length; i++) {
+    if (original.includes(summary[i])) {
+      matchCount++;
+    }
+  }
 
-  summaryWords.forEach(word => {
-    if (originalSet.has(word)) overlap++;
-  });
-
-  const overlapScore =
-    summaryWords.length > 0
-      ? (overlap / summaryWords.length) * 100
+  let contentScore =
+    summaryLength > 0
+      ? (matchCount / summaryLength) * 100
       : 0;
-
-  // 🔹 Readability
-  const avgWordLength =
-    summaryWords.length > 0
-      ? summaryWords.reduce((sum, w) => sum + w.length, 0) / summaryWords.length
-      : 0;
-
-  const readabilityScore = avgWordLength < 30 ? 100 : 70;
 
   
+  if (contentScore === 0 && summaryLength > 0) {
+    contentScore = 20;
+  }
+
+  
+  const uniqueChars = new Set(summary);
+  const redundancyScore =
+    summaryLength > 0
+      ? (uniqueChars.size / summaryLength) * 100
+      : 0;
+
+  // 🔹 Final score 
   const finalScore = Math.round(
-    lengthScore * 0.4 +      
-    overlapScore * 0.4 +
-    readabilityScore * 0.2
+    lengthScore * 0.4 +
+    contentScore * 0.4 +
+    redundancyScore * 0.2
   );
 
   return {
