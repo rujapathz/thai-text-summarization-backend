@@ -128,5 +128,5 @@ Adjust the URL in `summarize.service.ts` if running outside Docker.
 
 ## Related Repository
 
-- https://github.com/rujapathz/thai-text-summarization-frontend Add frontend repo link here
-- https://github.com/SiriMeesuk19796/thai-text-summarization-model Add Model repo link here
+- [Frontend](https://github.com/rujapathz/thai-text-summarization-frontend)
+- [Model](https://github.com/SiriMeesuk19796/thai-text-summarization-model)
